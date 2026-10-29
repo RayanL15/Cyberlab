@@ -5,7 +5,8 @@ import hmac
 import json
 import sqlite3
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from urllib.parse import parse_qs, urlparse
+from pathlib import Path
+from urllib.parse import urlparse
 
 FLAGS = {"sqli": "LAB{consulta_sem_parametros}", "logs": "LAB{203.0.113.42}", "secret": "LAB{base64_nao_e_criptografia}"}
 LOGS = '''2026-01-15T10:00:00Z ip=192.0.2.10 POST /login status=200 user=ana
@@ -57,6 +58,8 @@ class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         path = urlparse(self.path).path
         if path == "/":
+            self.reply(200, Path(__file__).with_name("index.html").read_text(encoding="utf-8"), "text/html")
+        elif path == "/avancado":
             self.reply(200, HTML, "text/html")
         elif path == "/artifacts/access.log":
             self.reply(200, LOGS, "text/plain")

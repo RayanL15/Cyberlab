@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>CyberLab — começando do zero</title>
+  <style>
+    :root { --bg:#0e1520; --panel:#172232; --border:#33475c; --text:#edf3fa; --muted:#bac9d9; --green:#88e8bd; --yellow:#ffe099; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--text); font:18px/1.65 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    button,input { font:inherit; }
+    button { cursor:pointer; }
+    button:disabled { cursor:default; opacity:.5; }
+    button:focus-visible,input:focus-visible,a:focus-visible,summary:focus-visible { outline:3px solid var(--yellow); outline-offset:4px; }
+    a { color:var(--green); }
+    .skip { position:absolute; top:-100px; left:16px; background:var(--panel); padding:12px; z-index:5; }
+    .skip:focus { top:10px; }
+    .wrap { max-width:1140px; margin:auto; padding:28px 24px 56px; }
+    header { display:flex; justify-content:space-between; align-items:center; gap:16px; padding-bottom:25px; border-bottom:1px solid var(--border); }
+    .brand { font-size:24px; font-weight:800; letter-spacing:-.7px; }
+    .brand span { color:var(--green); }
+    .tag { font-size:14px; color:var(--green); border:1px solid #426856; border-radius:30px; padding:4px 13px; }
+    .intro { padding:36px 0 27px; max-width:800px; }
+    h1 { font-size:clamp(29px,4.7vw,43px); line-height:1.2; margin:8px 0 14px; letter-spacing:-1px; }
+    h2 { font-size:clamp(25px,3.5vw,32px); line-height:1.3; margin:5px 0 14px; }
+    h3 { font-size:19px; margin:18px 0 8px; }
+    p { margin:0 0 16px; }
+    .muted,.intro p { color:var(--muted); }
+    .eyebrow { text-transform:uppercase; letter-spacing:1.5px; font-size:12px; font-weight:800; color:var(--green); }
+    .layout { display:grid; grid-template-columns:250px minmax(0,1fr); align-items:start; gap:28px; }
+    aside { position:sticky; top:20px; }
+    .progress-label { display:flex; justify-content:space-between; gap:8px; font-size:14px; }
+    progress { width:100%; height:9px; border:0; border-radius:10px; overflow:hidden; background:#293748; accent-color:var(--green); }
+    progress::-webkit-progress-bar { background:#293748; }
+    progress::-webkit-progress-value { background:var(--green); }
+    progress::-moz-progress-bar { background:var(--green); }
+    nav ol { list-style:none; padding:0; margin:22px 0; }
+    .step { width:100%; display:flex; align-items:center; gap:12px; border:1px solid transparent; border-radius:10px; padding:12px 10px; background:transparent; color:var(--muted); font-size:15px; text-align:left; line-height:1.4; }
+    .step[aria-current="step"] { background:#233448; border-color:#536d87; color:white; }
+    .step .number { width:27px; height:27px; flex-shrink:0; display:grid; place-items:center; border:1px solid #60758b; border-radius:50%; font-size:12px; }
+    .step.done .number { background:var(--green); color:var(--bg); border-color:var(--green); }
+    .quiet { background:transparent; border:1px solid var(--border); color:var(--muted); border-radius:9px; padding:9px 14px; font-size:14px; }
+    .card { background:var(--panel); border:1px solid var(--border); padding:clamp(21px,4vw,38px); border-radius:18px; min-width:0; }
+    .example,.definition { border-left:3px solid var(--green); background:#10202b; border-radius:0 8px 8px 0; padding:16px 19px; margin:20px 0; }
+    .definition { border-color:#99bfe7; background:#142a3c; font-size:16px; }
+    .example p:last-child,.definition p:last-child { margin-bottom:0; }
+    .exercise { border-top:1px solid var(--border); margin-top:28px; padding-top:22px; }
+    fieldset { margin:0; padding:0; border:0; min-width:0; }
+    legend { font-size:20px; font-weight:750; padding:0; margin-bottom:16px; }
+    .choice { display:block; width:100%; border:1px solid #53677c; background:#101b29; color:var(--text); border-radius:10px; padding:15px 18px; margin:0 0 12px; text-align:left; line-height:1.5; }
+    .choice:hover { border-color:var(--green); background:#1b3140; }
+    .choice.correct { border-color:var(--green); background:#183b31; }
+    .choice.incorrect { border-color:var(--yellow); }
+    .feedback { margin-top:16px; border-radius:10px; padding:0; }
+    .feedback.success { padding:16px 20px; background:#143b2b; color:#d0fbe3; }
+    .feedback.retry { padding:16px 20px; background:#3b3020; color:#ffe9b9; }
+    .feedback p:last-child { margin-bottom:0; }
+    details { margin-top:17px; color:var(--muted); font-size:16px; }
+    summary { cursor:pointer; color:var(--green); }
+    details p { padding:10px 0 0; }
+    .navigation { display:flex; gap:12px; justify-content:space-between; flex-wrap:wrap; margin-top:27px; }
+    .primary,.secondary { border-radius:10px; padding:12px 20px; font-weight:700; border:1px solid var(--green); background:var(--green); color:#112319; }
+    .secondary { background:transparent; color:var(--text); border-color:#60758b; }
+    .small { font-size:14px; color:var(--muted); }
+    code { background:#0e1825; border-radius:5px; padding:2px 6px; color:#d2e7ff; overflow-wrap:anywhere; }
+    pre { max-width:100%; overflow-x:auto; background:#0e1825; padding:16px; border-radius:10px; font-size:14px; line-height:1.6; }
+    pre code { padding:0; background:transparent; overflow-wrap:normal; }
+    .fields { display:grid; gap:13px; margin:18px 0; }
+    label { display:grid; gap:5px; font-size:16px; }
+    input { width:100%; border:1px solid #70869b; border-radius:8px; background:#0e1825; color:white; padding:10px 12px; }
+    .actions { display:flex; flex-wrap:wrap; gap:10px; }
+    .actions button { font-size:15px; }
+    .table-wrap { overflow-x:auto; border:1px solid var(--border); border-radius:10px; margin:20px 0; }
+    table { width:100%; border-collapse:collapse; font-size:15px; text-align:left; }
+    caption { padding:12px; text-align:left; color:var(--muted); }
+    th,td { padding:11px 13px; border-top:1px solid var(--border); }
+    th { background:#10202b; }
+    .mail { border:1px solid #52677d; border-radius:10px; padding:18px; margin:20px 0; font-size:16px; }
+    .mail hr { border:0; border-top:1px solid var(--border); margin:14px 0; }
+    .file { display:flex; gap:14px; align-items:center; flex-wrap:wrap; padding:17px; background:#10202b; border:1px solid var(--border); border-radius:10px; margin:16px 0; }
+    .file p { margin:0; }
+    .warning { border:1px solid var(--yellow); border-radius:8px; padding:12px; color:var(--yellow); font-size:15px; }
+    .celebrate { color:var(--green); font-size:45px; line-height:1; margin-bottom:15px; }
+    footer { margin-top:35px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:13px; }
+    [hidden] { display:none !important; }
+    @media(max-width:760px) {
+      .wrap { padding:20px 16px 35px; }
+      .layout { grid-template-columns:1fr; gap:20px; }
+      aside { position:static; }
+      nav ol { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:5px; margin:13px 0; }
+      .step { flex-direction:column; align-items:flex-start; font-size:12px; padding:10px 8px; gap:6px; height:100%; }
+      .intro { padding-top:26px; }
+      .tag { font-size:12px; }
+      .choice { padding:13px; }
+    }
+    @media(prefers-reduced-motion:no-preference) { button { transition:background .15s,border-color .15s; } }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#lesson">Ir para a aula</a>
+  <div class="wrap">
+    <header><div class="brand">Cyber<span>Lab</span></div><div class="tag">Começando do zero</div></header>
+    <section class="intro" aria-label="Boas-vindas">
+      <div class="eyebrow">Sua primeira trilha</div>
+      <h1>Segurança digital, um passo de cada vez.</h1>
+      <p>Você já conhece lógica e um pouco de Python ou C? Use essa base para aprender segurança: entenda a ideia, veja um exemplo e pratique sem precisar conhecer ataques.</p>
+      <p class="small">6 aulas · No seu ritmo · Pode tentar quantas vezes quiser</p>
+    </section>
+    <p id="storage-warning" class="warning" role="status" hidden>Seu navegador não permitiu salvar o progresso. Você pode continuar; ele ficará guardado só enquanto esta página estiver aberta.</p>
+    <noscript><p class="warning">Esta trilha usa JavaScript para os exercícios. Ative o JavaScript nas configurações do navegador e abra o arquivo novamente.</p></noscript>
+    <div class="layout">
+      <aside aria-label="Seu caminho">
+        <div class="progress-label"><label for="progress">Seu progresso</label><span id="progress-text">0 de 6</span></div>
+        <progress id="progress" value="0" max="6">0 de 6</progress>
+        <nav aria-label="Aulas"><ol id="steps"></ol></nav>
+        <p class="small">As aulas abrem uma de cada vez. As concluídas continuam disponíveis.</p>
+        <button id="reset" class="quiet" type="button">Recomeçar a trilha</button>
+      </aside>
+      <main id="lesson" class="card" tabindex="-1" aria-labelledby="lesson-title"></main>
+    </div>
+    <footer>Tudo aqui é fictício. Use apenas os dados dos exercícios. Nenhuma senha real é necessária. Pratique somente em sistemas em que você tem autorização.</footer>
+  </div>
+  <script>
+    'use strict';
+    const lessons = [
+      {
+        id:'protect', title:'O que vamos proteger?', type:'quiz',
+        body:`<p>Cibersegurança é proteger informações e sistemas contra acesso indevido, alterações não permitidas e interrupções. Vamos usar a lógica que você já conhece para entender o que um programa precisa proteger.</p>
+          <div class="example"><strong>Imagine um programa que guarda notas de alunos.</strong><p><strong>Confidencialidade:</strong> cada pessoa só vê os dados que pode ver.<br><strong>Integridade:</strong> ninguém muda uma nota sem permissão.<br><strong>Disponibilidade:</strong> o sistema e os dados estão acessíveis quando precisam ser usados.</p></div>
+          <p>Esses três nomes são objetivos de segurança. Um programa pode calcular tudo corretamente e ainda permitir que alguém leia ou altere dados que não deveria.</p>`,
+        question:'Um aluno consegue alterar a própria nota sem permissão. Qual objetivo foi afetado diretamente?',
+        choices:[
+          {text:'Confidencialidade: alguém só leu uma informação.', feedback:'O problema descrito é uma alteração sem permissão. A confidencialidade está ligada a quem pode ver informações.'},
+          {text:'Integridade: um dado foi alterado sem permissão.', correct:true, feedback:'Isso mesmo. A nota foi modificada de forma indevida. Aqui estamos analisando a integridade do dado.'},
+          {text:'Disponibilidade: o sistema ficou fora do ar.', feedback:'Não há informação de que o sistema parou. O problema é a alteração da nota; isso afeta a integridade.'}
+        ],
+        hint:'Separe as ações: ver um dado, mudar um dado e conseguir usar o sistema. Qual delas aconteceu?',
+        takeaway:'Além de perguntar “funciona?”, pergunte “quem pode ler, quem pode alterar e como recuperar se algo falhar?”.'
+      },
+      {
+        id:'account', title:'Login não é permissão', type:'quiz',
+        body:`<p><strong>Autenticação</strong> é verificar a identidade de quem está entrando, por exemplo com uma senha. <strong>Autorização</strong> é decidir o que essa pessoa pode fazer depois de entrar.</p>
+          <div class="example"><strong>Exemplo</strong><p>Um aluno entra na escola com a própria conta. Isso não dá a ele permissão para excluir a conta de outra pessoa. Essa ação precisa de uma verificação separada.</p></div>
+          <p>Em Python, a decisão para uma ação reservada à administração poderia ter esta estrutura:</p>
+          <pre><code>if not autenticado:
+    print("Entre na sua conta primeiro")
+elif papel != "admin":
+    print("Você não tem permissão para excluir usuários")
+else:
+    print("Ação de administrador permitida")</code></pre>
+          <p>Esse trecho ilustra a decisão; não implementa um sistema de login. Em um site real, o servidor precisa verificar as permissões. Esconder um botão na página não basta.</p>
+          <div class="definition"><strong>Protegendo a entrada</strong><p>Use senhas diferentes para cada conta e ative a verificação em duas etapas quando possível: ela pede uma confirmação extra além da senha.</p></div>`,
+        question:'Uma pessoa entrou como aluno e tentou excluir outra conta. Qual é a decisão correta?',
+        choices:[
+          {text:'Permitir, porque ela já fez login.', feedback:'Fazer login verifica a identidade, mas não libera todas as ações. Ainda precisamos verificar a permissão para excluir usuários.'},
+          {text:'Só esconder o botão na tela e deixar o servidor aceitar a ação.', feedback:'A tela não é a única forma de enviar uma solicitação. O servidor precisa conferir a permissão antes de executar a ação.'},
+          {text:'Recusar a exclusão porque essa conta não tem a permissão necessária.', correct:true, feedback:'Certo. A identidade foi reconhecida, mas a ação não foi autorizada. São verificações diferentes.'}
+        ],
+        hint:'Leia o elif. O que acontece se a pessoa estiver autenticada, mas seu papel não for admin?',
+        takeaway:'Autenticação: quem está entrando? Autorização: o que essa pessoa pode fazer?'
+      },
+      {
+        id:'input', title:'Conferindo uma entrada', type:'quiz',
+        body:`<p>Você já deve ter lido um valor com <code>input()</code> em Python ou recebido texto em C. Em segurança, precisamos pensar: “e se a pessoa enviar algo diferente do esperado?”.</p>
+          <p><strong>Validar uma entrada</strong> é conferir se ela atende às regras antes de usá-la. Neste programa fictício, a idade permitida vai de 1 a 120:</p>
+          <pre><code>texto = input("Idade: ")
+try:
+    idade = int(texto)
+except ValueError:
+    print("Digite um número inteiro")
+else:
+    if 1 &lt;= idade &lt;= 120:
+        print("Idade aceita")
+    else:
+        print("Use uma idade de 1 a 120")</code></pre>
+          <p>Há duas conferências: o texto representa um inteiro? Esse inteiro está na faixa permitida? Um número pode ser válido para o Python e inválido para a regra do programa.</p>
+          <details><summary>Conexão com C: o tamanho também importa</summary><pre><code>char nome[16];
+if (fgets(nome, sizeof nome, stdin) == NULL) {
+    /* tratar o erro de leitura */
+}</code></pre><p>O array tem espaço limitado. Com esse tamanho, <code>fgets</code> lê no máximo 15 caracteres e acrescenta o terminador. Ainda é preciso conferir o conteúdo e lidar com uma linha maior que o espaço disponível. Limitar o tamanho é uma parte do cuidado.</p></details>`,
+        question:'A pessoa digitou -5. A conversão para inteiro funciona. O que o programa deve fazer?',
+        choices:[
+          {text:'Aceitar, porque qualquer inteiro é uma idade permitida.', feedback:'Converter para inteiro não verifica a faixa permitida. A regra deste programa aceita apenas idades entre 1 e 120.'},
+          {text:'Recusar, porque -5 está fora da faixa de 1 a 120.', correct:true, feedback:'Exatamente. O tipo está certo, mas o valor não atende à regra. Validar significa verificar as duas coisas.'},
+          {text:'Esperar que o Python lance ValueError para -5.', feedback:'O Python consegue converter o texto -5 em inteiro. Quem precisa conferir a faixa de idade é o seu programa.'}
+        ],
+        hint:'Siga o código com idade = -5. A condição 1 <= idade <= 120 é verdadeira ou falsa?',
+        takeaway:'Não confie só no caminho esperado. Confira tipo, tamanho e regras dos dados recebidos.'
+      },
+      {
+        id:'login', title:'Experimentando um login', type:'login',
+        body:`<p><strong>Login</strong> significa entrar em uma conta. Você informa seus dados, e o serviço confere se eles correspondem ao que ele espera.</p>
+          <p>Vamos experimentar com uma conta de brincadeira. Este formulário só faz uma simulação nesta página; ele não cria nem acessa uma conta real.</p>
+          <details><summary>A lógica por trás da simulação</summary><pre><code>if usuario == "aluno" and senha == "treino-casa-lua-48":
+    print("Entrada permitida")
+else:
+    print("Entrada recusada")</code></pre><p>Você já conhece o <code>if</code>. Agora observe o que cada resultado significa para o acesso. Esta comparação com uma senha pública é só didática: em um sistema real, senhas precisam de armazenamento e verificação apropriados, sem guardá-las como texto puro.</p></details>
+          <div class="example"><strong>Dados deste exercício</strong><p>Usuário: <code>aluno</code><br>Senha fictícia: <code>treino-casa-lua-48</code></p><p class="small">Esses dados são públicos e servem só para treinar. Não use essa senha em uma conta sua.</p></div>
+          <ol><li>Primeiro, teste uma senha errada e observe a resposta.</li><li>Depois, entre com os dados do exercício e compare o resultado.</li></ol>`,
+        hint:'Clique em “Testar uma senha errada”. Depois, use “Preencher os dados do exercício” e clique em “Entrar na conta fictícia”.',
+        takeaway:'Uma tentativa de entrar não é a mesma coisa que um acesso autorizado. A resposta do sistema ajuda a distinguir as duas situações.'
+      },
+      {
+        id:'logs', title:'Lendo o que aconteceu', type:'quiz',
+        body:`<p>Um <strong>registro de atividade</strong> é uma anotação do que aconteceu em um sistema. Na área de tecnologia, também é chamado de <strong>log</strong>. Pense nele como um diário.</p>
+          <p>Cada linha abaixo conta um acontecimento: o horário, a conta usada, a ação e o resultado.</p>
+          <div class="table-wrap"><table><caption>Diário fictício do portal da escola</caption><thead><tr><th scope="col">Horário</th><th scope="col">Conta</th><th scope="col">O que aconteceu</th><th scope="col">Resultado</th></tr></thead><tbody>
+          <tr><td>09:00</td><td>Ana</td><td>Tentou entrar</td><td>Senha incorreta</td></tr>
+          <tr><td>09:01</td><td>Ana</td><td>Tentou entrar</td><td>Senha incorreta</td></tr>
+          <tr><td>09:02</td><td>Ana</td><td>Tentou entrar</td><td>Entrada permitida</td></tr>
+          <tr><td>09:03</td><td>Ana</td><td>Abriu o material da aula</td><td>Arquivo aberto</td></tr>
+          </tbody></table></div>
+          <p>Leia na ordem dos horários. A conta aparece nas anotações, mas isso sozinho não comprova quem estava usando o aparelho.</p>
+          <details><summary>Conexão com Python: contar falhas</summary><pre><code>resultados = ["falha", "falha", "sucesso"]
+falhas = 0
+for resultado in resultados:
+    if resultado == "falha":
+        falhas += 1
+print(falhas)  # 2</code></pre><p>Um laço simples já ajuda a resumir registros. Contar falhas é uma observação; provar uma invasão exigiria mais evidências. Não registre senhas nos logs.</p></details>`,
+        question:'O que podemos afirmar olhando só essas linhas?',
+        choices:[
+          {text:'Com certeza houve uma invasão.', feedback:'Essas linhas não provam uma invasão. Uma pessoa pode ter digitado a própria senha errado. Precisaríamos de mais informações para saber quem usou a conta.'},
+          {text:'A conta teve duas tentativas com senha incorreta e depois conseguiu entrar.', correct:true, feedback:'Exatamente. Isso é o que o registro mostra. Você leu os fatos sem concluir algo que os dados ainda não comprovam.'},
+          {text:'Nenhuma tentativa de entrada foi permitida.', feedback:'Veja a linha das 09:02: ela diz “Entrada permitida”. As duas primeiras tentativas falharam, mas a terceira foi aceita.'}
+        ],
+        hint:'Compare as três primeiras linhas. Quais falharam? Qual foi permitida?',
+        takeaway:'Investigar começa por observar os fatos e separar o que sabemos do que ainda precisamos descobrir.'
+      },
+      {
+        id:'backup', title:'Recuperando um arquivo', type:'backup',
+        body:`<p>Você pode perder um arquivo por engano, por um defeito ou por um problema de segurança. Uma <strong>cópia de segurança</strong>, também chamada de <strong>backup</strong>, ajuda a recuperar o que foi perdido. Isso se relaciona à disponibilidade que vimos na primeira aula.</p>
+          <p>Guarde uma cópia em outro local, como um serviço de armazenamento com histórico ou uma unidade externa protegida. Manter só um atalho ou apenas a única cópia no mesmo aparelho não resolve se o aparelho falhar.</p>
+          <div class="definition"><strong>Restaurar</strong><p>É recuperar um arquivo a partir da cópia de segurança. Vale testar a recuperação para saber se ela funciona.</p></div>
+          <p>Vamos simular: uma cópia de <code>anotacoes.txt</code> já foi guardada em outro local. Apague o original fictício e depois recupere a cópia. Nenhum arquivo do seu computador será alterado.</p>`,
+        hint:'Primeiro clique em “Apagar o original fictício”. Depois clique em “Recuperar da cópia de segurança”.',
+        takeaway:'Ter uma cópia de segurança e saber recuperá-la ajuda você a se preparar para imprevistos.'
+      }
+    ];
+
+    const storageKey = 'cyberlab-zero-v1';
+    let state = {completed:[], current:0};
+    try {
+      const saved = JSON.parse(localStorage.getItem(storageKey) || 'null');
+      if (saved && Array.isArray(saved.completed)) {
+        // Preserve a completed prefix so invalid local data cannot lock navigation.
+        for (const lesson of lessons) {
+          if (!saved.completed.includes(lesson.id)) break;
+          state.completed.push(lesson.id);
+        }
+        if (Number.isInteger(saved.current)) state.current = Math.max(0, Math.min(saved.current, state.completed.length, lessons.length));
+      }
+    } catch { document.querySelector('#storage-warning').hidden = false; }
+
+    function save() {
+      try { localStorage.setItem(storageKey, JSON.stringify(state)); }
+      catch { document.querySelector('#storage-warning').hidden = false; }
+    }
+    function feedback(element, text, success) {
+      element.className = 'feedback ' + (success ? 'success' : 'retry');
+      element.textContent = text;
+    }
+    function completed() { return state.completed.includes(lessons[state.current]?.id); }
+    function updateChrome() {
+      const count = state.completed.length;
+      document.querySelector('#progress').value = count;
+      document.querySelector('#progress').textContent = `${count} de ${lessons.length}`;
+      document.querySelector('#progress-text').textContent = `${count} de ${lessons.length}`;
+      const steps = document.querySelector('#steps');
+      steps.replaceChildren();
+      lessons.forEach((lesson, i) => {
+        const li = document.createElement('li');
+        const button = document.createElement('button');
+        const done = state.completed.includes(lesson.id);
+        button.type = 'button';
+        button.className = 'step' + (done ? ' done' : '');
+        button.disabled = i > count;
+        if (i === state.current) button.setAttribute('aria-current','step');
+        button.innerHTML = `<span class="number" aria-hidden="true">${done ? '✓' : i + 1}</span><span>${lesson.title}${done ? '<span class="small"> · concluída</span>' : ''}</span>`;
+        button.addEventListener('click', () => go(i));
+        li.append(button);
+        steps.append(li);
+      });
+      const next = document.querySelector('#next');
+      if (next) next.disabled = !completed();
+    }
+    function finishLesson() {
+      const lesson = lessons[state.current];
+      if (!completed()) state.completed.push(lesson.id);
+      document.querySelector('#takeaway').hidden = false;
+      save();
+      updateChrome();
+    }
+    function go(index, focus = true) {
+      state.current = index;
+      save();
+      render();
+      if (focus) document.querySelector('#lesson').focus();
+    }
+    function render() {
+      const main = document.querySelector('#lesson');
+      if (state.current === lessons.length) {
+        main.innerHTML = `<div class="celebrate" aria-hidden="true">✓</div><div class="eyebrow">Trilha concluída</div><h2 id="lesson-title">Você deu seus primeiros passos.</h2>
+          <p>Agora você já praticou seis coisas importantes:</p><ul><li>Entender confidencialidade, integridade e disponibilidade.</li><li>Separar identidade de permissão.</li><li>Validar entradas usando uma regra clara.</li><li>Comparar tentativas de entrada aceitas e recusadas.</li><li>Ler registros sem tirar conclusões precipitadas.</li><li>Recuperar um arquivo de uma cópia de segurança.</li></ul>
+          <div class="example"><strong>Um próximo passo simples</strong><p>Escolha um programa seu em Python ou C que recebe dados. Liste as entradas possíveis, teste uma entrada vazia e um valor fora da faixa esperada. Observe o resultado e pense em uma regra para tratá-los.</p></div>
+          <p>Você pode rever as aulas pelo menu. Não precisa correr para estudar ataques ou decorar comandos.</p><button class="secondary" id="review" type="button">Rever a primeira aula</button>`;
+        document.querySelector('#review').addEventListener('click', () => go(0));
+        updateChrome();
+        return;
+      }
+      const lesson = lessons[state.current];
+      main.innerHTML = `<div class="eyebrow">Aula ${state.current + 1} de ${lessons.length}</div><h2 id="lesson-title">${lesson.title}</h2>${lesson.body}
+        <section class="exercise" id="exercise" aria-label="Hora de experimentar"></section>
+        <details><summary>Quero uma ajuda</summary><p>${lesson.hint}</p></details>
+        <div class="example" id="takeaway" ${completed() ? '' : 'hidden'}><strong>O que levar desta aula</strong><p>${lesson.takeaway}</p></div>
+        <div class="navigation"><button class="secondary" id="back" type="button" ${state.current === 0 ? 'disabled' : ''}>Voltar</button><button class="primary" id="next" type="button" ${completed() ? '' : 'disabled'}>${state.current === lessons.length - 1 ? 'Ver o que aprendi' : 'Próxima aula →'}</button></div>
+        <p class="small" id="next-help">${completed() ? 'Aula concluída. Você pode seguir ou experimentar de novo.' : 'Faça o exercício para liberar a próxima aula. Errar faz parte: leia a explicação e tente de novo.'}</p>`;
+      document.querySelector('#back').addEventListener('click', () => go(state.current - 1));
+      document.querySelector('#next').addEventListener('click', () => { if (completed()) go(state.current + 1); });
+      if (lesson.type === 'quiz') renderQuiz(lesson);
+      if (lesson.type === 'login') renderLogin();
+      if (lesson.type === 'backup') renderBackup();
+      updateChrome();
+    }
+    function showCompletion() {
+      finishLesson();
+      document.querySelector('#next-help').textContent = 'Aula concluída. Você pode seguir ou experimentar de novo.';
+    }
+    function renderQuiz(lesson) {
+      const exercise = document.querySelector('#exercise');
+      exercise.innerHTML = `<fieldset><legend>${lesson.question}</legend><div id="choices"></div></fieldset><div class="feedback" id="answer" role="status" aria-live="polite"></div>`;
+      lesson.choices.forEach((choice, index) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'choice';
+        button.dataset.choice = index;
+        button.textContent = choice.text;
+        button.addEventListener('click', () => {
+          exercise.querySelectorAll('.choice').forEach(item => { item.className = 'choice'; });
+          button.classList.add(choice.correct ? 'correct' : 'incorrect');
+          feedback(document.querySelector('#answer'), (choice.correct ? 'Isso mesmo! ' : 'Vamos pensar juntos. ') + choice.feedback, !!choice.correct);
+          if (choice.correct) showCompletion();
+        });
+        document.querySelector('#choices').append(button);
+      });
+    }
+    function renderLogin() {
+      let triedWrong = false;
+      const exercise = document.querySelector('#exercise');
+      exercise.innerHTML = `<h3>Uma conta de brincadeira</h3><button class="secondary" id="try-wrong" type="button">1. Testar uma senha errada</button>
+        <form id="training-login" autocomplete="off"><div class="fields"><label for="username">Usuário fictício<input id="username" name="username" autocomplete="off" autocapitalize="none" spellcheck="false" required></label>
+        <label for="password">Senha fictícia do exercício<input id="password" name="password" type="password" autocomplete="off" required aria-describedby="fake-only"></label></div>
+        <p class="small" id="fake-only">Use somente os dados de treino mostrados acima. Não digite sua senha real.</p>
+        <div class="actions"><button class="secondary" id="fill-login" type="button">2. Preencher os dados do exercício</button><button class="primary" type="submit">Entrar na conta fictícia</button></div></form>
+        <div class="feedback" id="login-feedback" role="status" aria-live="polite"></div>`;
+      const user = document.querySelector('#username');
+      const password = document.querySelector('#password');
+      const result = document.querySelector('#login-feedback');
+      function simulate() {
+        if (user.value !== 'aluno' || password.value !== 'treino-casa-lua-48') {
+          triedWrong = true;
+          feedback(result, 'Entrada recusada: os dados não correspondem à conta fictícia. Isso é uma tentativa que falhou. Agora use os dados do exercício para comparar.', false);
+        } else if (!triedWrong && !completed()) {
+          feedback(result, 'Os dados estão certos! Antes de concluir, teste uma senha errada com o botão 1. Assim você vê as duas respostas. Depois tente entrar novamente.', false);
+        } else {
+          feedback(result, 'Entrada permitida! Você comparou uma tentativa que falhou com uma que deu certo. Nenhuma conta real foi acessada.', true);
+          showCompletion();
+        }
+        password.value = '';
+      }
+      document.querySelector('#try-wrong').addEventListener('click', () => { user.value = 'aluno'; password.value = 'errada'; simulate(); });
+      document.querySelector('#fill-login').addEventListener('click', () => { user.value = 'aluno'; password.value = 'treino-casa-lua-48'; });
+      document.querySelector('#training-login').addEventListener('submit', event => { event.preventDefault(); simulate(); });
+    }
+    function renderBackup() {
+      let deleted = false;
+      const exercise = document.querySelector('#exercise');
+      exercise.innerHTML = `<h3>Seu arquivo de treino</h3><div class="file"><span aria-hidden="true">▤</span><div><strong>anotacoes.txt</strong><p id="file-status">Original disponível · Conteúdo: “Hoje comecei a aprender segurança digital.”</p></div></div>
+        <p class="small">Cópia de segurança: disponível em outro local fictício.</p><div class="actions"><button class="secondary" id="delete-file" type="button">1. Apagar o original fictício</button><button class="primary" id="restore-file" type="button" disabled>2. Recuperar da cópia de segurança</button></div>
+        <div class="feedback" id="backup-feedback" role="status" aria-live="polite"></div>`;
+      const status = document.querySelector('#file-status');
+      const remove = document.querySelector('#delete-file');
+      const restore = document.querySelector('#restore-file');
+      const result = document.querySelector('#backup-feedback');
+      remove.addEventListener('click', () => {
+        deleted = true;
+        status.textContent = 'O original fictício foi apagado. A cópia de segurança continua disponível.';
+        remove.disabled = true;
+        restore.disabled = false;
+        feedback(result, 'O original sumiu da simulação, mas há uma segunda cópia. Agora experimente recuperar o arquivo.', false);
+      });
+      restore.addEventListener('click', () => {
+        if (!deleted) return;
+        deleted = false;
+        status.textContent = 'Arquivo recuperado · Conteúdo: “Hoje comecei a aprender segurança digital.”';
+        restore.disabled = true;
+        remove.disabled = false;
+        feedback(result, 'Arquivo recuperado! A cópia permitiu trazer de volta o conteúdo que tinha sido apagado. Nenhum arquivo real foi alterado.', true);
+        showCompletion();
+      });
+    }
+    document.querySelector('#reset').addEventListener('click', () => {
+      if (!window.confirm('Recomeçar a trilha e apagar o progresso destas seis aulas neste navegador?')) return;
+      state = {completed:[], current:0};
+      go(0);
+    });
+    render();
+  </script>
+</body>
+</html>
