@@ -1,72 +1,147 @@
-# CyberLab — primeiros passos em segurança de software
+# CyberLab — primeiros passos em segurança no Windows
 
-Uma trilha de cibersegurança para quem conhece lógica e já escreveu um pouco de
-Python ou C, mas ainda não estudou segurança. Os exemplos conectam conceitos de
-segurança a condições, entradas de dados e registros de um programa.
+Uma trilha em português para quem está começando em segurança e já conhece
+um pouco de lógica, Python ou C. As seis aulas apresentam proteção de dados,
+identidade e permissões, validação de entradas, login, logs e recuperação de arquivos.
 
-**Abra `index.html` no navegador para começar. A trilha não exige instalação de pacotes nem servidor.**
+**Agora há uma área com 21 comandos básicos de CMD e PowerShell**, com busca,
+filtro por assunto, explicações do resultado e três práticas com arquivos locais.
 
-## Executar
+## Começar no Windows
 
 1. No GitHub, use **Code → Download ZIP**.
-2. Extraia o ZIP e abra a pasta do projeto.
-3. Abra **index.html** no navegador e comece pelo módulo 1.
+2. Clique com o botão direito no ZIP e escolha **Extrair Tudo**.
+3. Entre na pasta extraída.
+4. Abra **index.html** no navegador para as aulas.
+5. Clique em **Praticar comandos no Windows** para abrir a nova área.
 
-Se você já baixou a versão anterior, baixe o ZIP novamente. Você também pode
-usar seu checkout local atualizado e abrir o mesmo arquivo.
+As aulas e a área de comandos funcionam sem servidor, sem Python e sem pacotes.
+A página apresenta exemplos: você copia e executa os comandos no seu terminal.
+O arquivo **docs/guia-windows.md** reúne o material para consulta.
 
-## O que você vai aprender
+## Iniciar o servidor no Windows
 
-1. **O que proteger em um programa.** Confidencialidade é limitar quem pode ler
-   informações; integridade é impedir alterações indevidas; disponibilidade é
-   manter o serviço e os dados acessíveis quando necessários.
-2. **Autenticação e autorização.** O login verifica quem você é; a permissão
-   determina o que você pode fazer. O módulo também apresenta senhas exclusivas
-   e a verificação em duas etapas, uma confirmação extra além da senha.
-3. **Validar entradas.** Um exemplo em Python converte uma entrada com `int` e
-   verifica o intervalo de 1 a 120. Um exemplo em C explica o limite de leitura
-   com `fgets` em relação ao tamanho de um array. O objetivo é reconhecer dados
-   inesperados e limites, sem exercícios de exploração.
-4. **Observar um login fictício.** Compare uma tentativa com senha incorreta e
-   outra com a senha fornecida, relacionando o resultado a uma condição em
-   Python. A simulação ensina o fluxo de decisão; não é um modelo de
-   autenticação para produção.
-5. **Interpretar registros de um programa.** Leia um histórico simples de
-   tentativas de entrada, conecte os eventos ao código Python e diferencie
-   falhas de sucessos. Uma tentativa que falhou não prova uma invasão.
-6. **Recuperar dados.** Entenda como cópias de segurança e testes de recuperação
-   ajudam a manter a disponibilidade depois de uma falha.
+Para usar também os desafios locais opcionais, instale **Python 3.10 ou superior**
+em [python.org](https://www.python.org/downloads/). Reabra o terminal depois de instalar.
+Nenhum pacote adicional é necessário.
 
-Cada módulo explica o conceito antes do exercício. Você pode consultar dicas e
-tentar novamente sem penalidade; as respostas incluem uma explicação.
-Os dados e as credenciais apresentados são fictícios.
+O jeito mais simples é dar **dois cliques em iniciar.cmd**. Ele procura uma
+instalação compatível do Python, inicia o servidor e abre o navegador.
+
+### Pelo CMD
+
+Na pasta extraída:
+
+~~~bat
+iniciar.cmd
+~~~
+
+Para entrar na pasta, use o caminho real, mantendo as aspas:
+
+~~~bat
+cd /d "C:\caminho\Cyberlab-main"
+~~~
+
+### Pelo PowerShell
+
+Na pasta extraída:
+
+~~~powershell
+.\iniciar.cmd
+~~~
+
+Também existe o iniciador nativo:
+
+~~~powershell
+.\iniciar.ps1
+~~~
+
+Se a política de execução bloquear o arquivo .ps1, use .\iniciar.cmd ou
+o comando direto abaixo. Não é necessário mudar a política para usar o laboratório.
+
+### Executar diretamente com Python
+
+Funciona no CMD e no PowerShell:
+
+~~~text
+py -3 lab.py --open
+~~~
+
+Se py não estiver disponível e python estiver configurado:
+
+~~~text
+python lab.py --open
+~~~
+
+Para conferir a versão, execute py -3 --version ou python --version.
+Mantenha o terminal aberto e pressione **Ctrl+C** para encerrar o servidor.
+
+## Endereços locais
+
+Com o servidor rodando, abra no navegador:
+
+- **http://127.0.0.1:8000** — seis aulas iniciais.
+- **http://127.0.0.1:8000/windows** — comandos para CMD e PowerShell.
+- **http://127.0.0.1:8000/avancado** — desafios opcionais de SQL, logs e Base64.
+
+127.0.0.1 é o próprio computador. O servidor escuta apenas nesse endereço.
+A área avançada contém falhas intencionais e dados fictícios para estudo local.
+Pratique em sistemas de outras pessoas somente com autorização.
+
+## O que praticar primeiro
+
+1. **Pastas e arquivos:** cd, dir, mkdir, type e copy; no PowerShell,
+   Get-Location, Get-ChildItem, New-Item, Get-Content e Copy-Item.
+2. **Rede:** ipconfig, ping e nslookup. Depois observe a porta 8000 com netstat
+   ou Get-NetTCPConnection e teste-a com Test-NetConnection.
+3. **Sistema:** whoami e tasklist; no PowerShell, Get-Process.
+4. **Segurança:** localizar eventos com findstr ou Select-String, comparar
+   hashes com SHA256 e consultar permissões com icacls ou Get-Acl.
+
+O arquivo exemplos/acessos.log contém os registros fictícios das práticas.
+Uma tentativa que falhou não prova uma invasão. Copiar um arquivo para o mesmo
+disco é só demonstração; um backup real também precisa proteger contra perda do aparelho.
+
+## Arquivos do projeto
+
+- **index.html:** seis aulas com exercícios e progresso no navegador.
+- **comandos-windows.html:** referência interativa de comandos do Windows.
+- **lab.py:** servidor local e desafios opcionais.
+- **iniciar.cmd / iniciar.ps1:** iniciadores para Windows.
+- **exemplos/acessos.log:** arquivo fictício para treinar leitura de logs.
+- **docs/guia-windows.md:** guia de estudo com exemplos.
 
 ## Progresso
 
-O navegador tenta salvar seu progresso neste computador. Se o armazenamento
-estiver bloqueado, a trilha continua funcionando e mantém o progresso enquanto a
-página estiver aberta. O progresso não é sincronizado entre navegadores ou
-dispositivos. Não é necessário criar uma conta.
+O navegador tenta salvar o progresso das seis aulas neste computador.
+Se o armazenamento estiver bloqueado, elas continuam funcionando enquanto a
+página estiver aberta. Não há conta nem sincronização entre dispositivos.
 
-## Opcional: servir a página com Python
+## Problemas comuns
 
-Se preferir usar um servidor local, o projeto requer apenas Python 3.10 ou
-superior, sem pacotes adicionais. Na pasta do projeto, execute:
+- **Python não encontrado:** instale uma versão compatível, reabra o terminal
+  e confira py -3 --version ou python --version.
+- **Porta 8000 ocupada:** confira se outra janela já está rodando o CyberLab;
+  encerre essa instância com Ctrl+C antes de abrir outra.
+- **Arquivo não encontrado:** extraia o ZIP inteiro e confira a pasta atual
+  com cd no CMD ou Get-Location no PowerShell.
+- **A página não abriu automaticamente:** digite http://127.0.0.1:8000 no navegador.
+- **Comando do Windows indisponível:** Get-NetIPConfiguration, Resolve-DnsName e
+  Get-NetTCPConnection dependem de módulos do Windows; use ipconfig, nslookup
+  e netstat como alternativas.
 
-```sh
+## Linux e macOS
+
+As aulas continuam abrindo por index.html. Para o servidor:
+
+~~~sh
 python3 lab.py
-```
+~~~
 
-No Windows, você também pode usar `py lab.py`. Com o processo rodando, digite
-`127.0.0.1:8000` no navegador do mesmo computador. Para encerrar, pressione
-**Ctrl+C** no terminal.
+Os exemplos da área Windows são específicos do Windows.
 
-## Para depois: exercícios de exploração
+## Referências oficiais
 
-Os exercícios anteriores de SQL injection, análise de registros e Base64 ficam
-em `127.0.0.1:8000/avancado` quando o servidor Python estiver rodando. Eles são
-opcionais e podem ficar para depois da trilha inicial.
-
-A área avançada contém falhas intencionais para estudo e usa dados fictícios.
-O servidor escuta apenas no próprio computador; mantenha-o assim, sem publicá-lo
-na Internet. Pratique em sistemas de outras pessoas somente com autorização.
+- [Comandos do Windows](https://learn.microsoft.com/pt-br/windows-server/administration/windows-commands/windows-commands)
+- [PowerShell](https://learn.microsoft.com/pt-br/powershell/)
+- [Python no Windows](https://docs.python.org/3/using/windows.html)
