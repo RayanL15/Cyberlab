@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 """Laboratório educativo local. Não exponha esta aplicação à Internet."""
 import base64
+import argparse
 import hmac
 import json
 import sqlite3
+import sys
+import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from threading import Timer
 from urllib.parse import urlparse
 
 FLAGS = {"sqli": "LAB{consulta_sem_parametros}", "logs": "LAB{203.0.113.42}", "secret": "LAB{base64_nao_e_criptografia}"}
@@ -57,10 +61,15 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         path = urlparse(self.path).path
-        if path == "/":
-            self.reply(200, Path(__file__).with_name("index.html").read_text(encoding="utf-8"), "text/html")
+        pages = {"/": "index.html", "/index.html": "index.html",
+                 "/windows": "comandos-windows.html",
+                 "/comandos-windows.html": "comandos-windows.html"}
+        if path in pages:
+            self.reply(200, Path(__file__).with_name(pages[path]).read_text(encoding="utf-8"), "text/html")
         elif path == "/avancado":
             self.reply(200, HTML, "text/html")
+        elif path == "/exemplos/acessos.log":
+            self.reply(200, LOGS, "text/plain")
         elif path == "/artifacts/access.log":
             self.reply(200, LOGS, "text/plain")
         elif path == "/artifacts/config.json":
@@ -103,6 +112,34 @@ class Handler(BaseHTTPRequestHandler):
             conn.close()
 
 
+def main():
+    parser = argparse.ArgumentParser(description="CyberLab local para Windows, Linux e macOS.")
+    parser.add_argument("--open", action="store_true", help="abrir o navegador ao iniciar")
+    args = parser.parse_args()
+    if sys.version_info < (3, 10):
+        print("Use Python 3.10 ou superior.", file=sys.stderr)
+        return 1
+    try:
+        server = ThreadingHTTPServer(("127.0.0.1", 8000), Handler)
+    except OSError as exc:
+        print("Nao foi possivel iniciar na porta 8000. Confira se outra instancia "
+              "do CyberLab ja esta aberta.\nDetalhe: " + str(exc), file=sys.stderr)
+        return 1
+    print("CyberLab: http://127.0.0.1:8000\n"
+          "Comandos Windows: http://127.0.0.1:8000/windows\n"
+          "Mantenha este terminal aberto. Ctrl+C encerra.", flush=True)
+    if args.open:
+        opener = Timer(0.4, webbrowser.open, args=("http://127.0.0.1:8000",))
+        opener.daemon = True
+        opener.start()
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        print("\nCyberLab encerrado.")
+    finally:
+        server.server_close()
+    return 0
+
+
 if __name__ == "__main__":
-    print("CyberLab iniciado em loopback, porta 8000. Ctrl+C encerra.", flush=True)
-    ThreadingHTTPServer(("127.0.0.1", 8000), Handler).serve_forever()
+    raise SystemExit(main())

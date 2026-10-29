@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>CyberLab — comandos básicos no Windows</title>
+<style>
+:root{--bg:#0e1520;--panel:#172232;--line:#3e5369;--text:#edf3fa;--muted:#bac9d9;--green:#88e8bd;--yellow:#ffe099}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:17px/1.65 system-ui,"Segoe UI",sans-serif}main{max-width:1100px;margin:auto;padding:28px 24px 60px}a{color:var(--green)}h1{font-size:clamp(30px,5vw,46px);line-height:1.16;letter-spacing:-1px;margin:24px 0 14px}h2{font-size:25px;line-height:1.3;margin:0 0 15px}h3{font-size:19px;margin:0 0 8px}p{margin:0 0 14px}.muted{color:var(--muted)}.eyebrow{color:var(--green);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px}.intro{max-width:790px}.panel,article{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:23px;margin:24px 0}.note{border-left:3px solid var(--green);padding:12px 18px;background:#10202b;margin:20px 0}.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:end}.controls label{flex:1;min-width:180px}button,input,select{font:inherit}button{cursor:pointer;border:1px solid var(--line);border-radius:8px;padding:9px 15px;background:#10202b;color:var(--text)}button[aria-pressed="true"],button:hover{background:var(--green);color:#112319;border-color:var(--green)}button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid var(--yellow);outline-offset:4px}input,select{display:block;width:100%;padding:10px 12px;border:1px solid #6c8299;background:#0e1825;color:var(--text);border-radius:8px}label{font-size:14px}.shells{display:flex;gap:8px;margin-bottom:18px}code{background:#0e1825;color:#d2e7ff;border-radius:4px;padding:2px 5px;overflow-wrap:anywhere}pre{margin:12px 0;padding:15px;background:#0e1825;border-radius:9px;overflow:auto;font-size:14px;line-height:1.65}pre code{background:transparent;padding:0;white-space:pre}.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.cards article{margin:0;min-width:0}.category{font-size:12px;color:var(--green);text-transform:uppercase;letter-spacing:1px}.output{color:var(--muted);font-size:15px}.copy{font-size:14px;padding:6px 12px}.count{margin:16px 0}.practice{margin-top:34px}.practice details{border-top:1px solid var(--line);padding:18px 0}summary{cursor:pointer;font-weight:700}.practice details p{margin-top:14px}.practice details:last-child{padding-bottom:0}.sources{font-size:14px;color:var(--muted);margin-top:32px}footer{font-size:14px;color:var(--muted);margin-top:25px}.status{min-height:1.5em;color:var(--green);font-size:14px}[hidden]{display:none!important}@media(max-width:650px){main{padding:20px 16px 40px}.cards{grid-template-columns:1fr}.panel,article{padding:19px}}
+</style>
+</head>
+<body>
+<main>
+<a href="index.html">← Voltar às seis aulas</a>
+<section class="intro">
+<div class="eyebrow" style="margin-top:24px">CyberLab no Windows</div>
+<h1>Entenda o comando antes de executar.</h1>
+<p class="muted">Comece por navegar nas pastas, ler arquivos e observar seu computador. Depois use essa base para estudar rede, registros de atividade e integridade.</p>
+<p>Escolha seu terminal abaixo. Os exemplos são para Windows 10 e 11, com Windows PowerShell 5.1 ou PowerShell 7 no Windows. <strong>Copie o comando e execute no seu terminal.</strong> Esta página não executa comandos no computador.</p>
+</section>
+<section class="panel" aria-labelledby="start-title">
+<h2 id="start-title">Como abrir o laboratório</h2>
+<p>Extraia o ZIP do GitHub. Abra <code>index.html</code> para as aulas ou dê dois cliques em <code>iniciar.cmd</code> para iniciar o servidor e abrir o navegador. O servidor precisa de Python 3.10 ou superior.</p>
+<p>No CMD, execute <code>iniciar.cmd</code>. No PowerShell, execute <code>.\iniciar.cmd</code>. Há também <code>.\iniciar.ps1</code> quando a política de scripts permitir. Se ela bloquear o arquivo, use o <code>.cmd</code> ou <code>py -3 lab.py --open</code>.</p>
+<p class="muted">Mantenha o terminal aberto durante o uso do servidor. Pressione Ctrl+C para encerrar. O endereço é <code>http://127.0.0.1:8000</code>; <code>127.0.0.1</code> significa este computador.</p>
+</section>
+<section aria-label="Escolha de terminal e pesquisa">
+<h2>Comandos para começar</h2>
+<div class="shells" role="group" aria-label="Terminal dos exemplos"><button id="cmd" type="button" aria-pressed="true">CMD</button><button id="powershell" type="button" aria-pressed="false">PowerShell</button></div>
+<p id="shell-note" class="muted"></p>
+<div class="controls"><label for="search">Buscar por comando ou assunto<input id="search" type="search" placeholder="Ex.: pasta, rede, hash" autocomplete="off"></label><label for="category">Assunto<select id="category"><option value="Todos">Todos</option><option>Arquivos</option><option>Rede</option><option>Sistema</option><option>Segurança</option></select></label></div>
+<p id="count" class="muted count" role="status" aria-live="polite"></p>
+<div id="cards" class="cards"></div>
+<p id="empty" hidden>Nenhum resultado. Tente outra palavra ou escolha Todos.</p>
+<p id="copy-status" class="status" role="status" aria-live="polite"></p>
+</section>
+<section class="panel practice" aria-labelledby="practice-title">
+<h2 id="practice-title">Três práticas curtas</h2>
+<p>Use os passos do terminal selecionado. Rode uma linha por vez. A pasta de treino fica nos arquivos temporários do seu usuário e pode ser removida pelo Windows depois.</p>
+<details><summary>1 · Criar, ler e copiar um arquivo</summary><p>Crie uma pasta de treino e um arquivo com uma anotação. <code>&gt;</code> e <code>Set-Content</code> substituem o conteúdo de um arquivo existente; use apenas este arquivo de exercício.</p><pre><code id="files-practice"></code></pre><p><strong>Confira:</strong> a pasta deve conter <code>nota.txt</code> e <code>copia.txt</code>. A cópia neste mesmo disco é só uma demonstração, sem proteção contra falha do aparelho.</p></details>
+<details><summary>2 · Ver uma alteração pelo hash</summary><p>Continue na pasta da prática 1. Calcule o hash, acrescente texto à nota e calcule de novo.</p><pre><code id="hash-practice"></code></pre><p><strong>Confira:</strong> o hash da nota muda. O da cópia continua com o valor anterior. Hash ajuda a comparar conteúdo, mas não cifra o arquivo nem atesta que ele é seguro.</p></details>
+<details><summary>3 · Ler os registros do CyberLab</summary><p>Abra outro terminal <strong>na pasta do projeto</strong>. Use o arquivo fictício <code>exemplos\acessos.log</code> que acompanha o CyberLab.</p><pre><code id="logs-practice"></code></pre><p><strong>Confira:</strong> aparecem três linhas com <code>status=401</code>. O IP <code>203.0.113.42</code> também aparece depois com sucesso e download de backup. Isso merece investigação; esses registros isolados não identificam a pessoa nem provam uma invasão. Os IPs desse arquivo são exemplos reservados para documentação.</p></details>
+</section>
+<section class="panel">
+<h2>Conecte os comandos às aulas</h2>
+<p><strong>Confidencialidade:</strong> observe quem tem permissão de acesso. <strong>Integridade:</strong> compare hashes antes e depois de uma alteração. <strong>Disponibilidade:</strong> teste o servidor local e pratique recuperar cópias.</p>
+<p><strong>Autenticação</strong> confere a identidade; <strong>autorização</strong> define o que essa conta pode fazer. <code>whoami</code> mostra a conta da sessão, sem testar uma senha.</p>
+<p><strong>Validação:</strong> no seu código, confira tipo, tamanho e intervalo de entrada. <strong>Logs:</strong> descreva o que o arquivo registra antes de concluir a causa.</p>
+</section>
+<div class="sources"><strong>Referências oficiais</strong><ul><li><a href="https://learn.microsoft.com/pt-br/windows-server/administration/windows-commands/windows-commands">Comandos do Windows</a></li><li><a href="https://learn.microsoft.com/pt-br/powershell/module/microsoft.powershell.utility/get-filehash?view=powershell-5.1">Get-FileHash</a> e <a href="https://learn.microsoft.com/pt-br/powershell/module/microsoft.powershell.utility/select-string?view=powershell-5.1">Select-String</a></li><li><a href="https://learn.microsoft.com/pt-br/powershell/module/nettcpip/test-netconnection">Test-NetConnection</a></li><li><a href="https://docs.python.org/3/using/windows.html">Python no Windows</a></li></ul></div>
+<footer>Pratique no próprio computador e nos arquivos de treino. Os exemplos não exigem executar o terminal como administrador. Consultas de rede externas, como DNS, precisam de conexão.</footer>
+<noscript><p>Ative o JavaScript para alternar os exemplos e usar a busca. O guia em <code>docs/guia-windows.md</code> também contém os passos.</p></noscript>
+</main>
+<script>
+'use strict';
+const commands = [
+{title:'Saber em qual pasta estou',category:'Arquivos',cmd:'cd',powershell:'Get-Location',why:'Mostra a pasta atual. É a partir dela que os caminhos relativos são interpretados.',output:'Observe o caminho, por exemplo C:\\Users\\SeuNome\\Downloads\\Cyberlab-main.'},
+{title:'Listar arquivos e pastas',category:'Arquivos',cmd:'dir',powershell:'Get-ChildItem',why:'Veja o que existe na pasta atual antes de abrir ou modificar um arquivo.',output:'Procure nomes como index.html, lab.py e iniciar.cmd.'},
+{title:'Entrar em uma pasta',category:'Arquivos',cmd:'cd /d "C:\\caminho\\Cyberlab-main"',powershell:'Set-Location "C:\\caminho\\Cyberlab-main"',why:'Troque o caminho pelo da pasta extraída. As aspas mantêm nomes com espaços juntos.',output:'No CMD, /d também troca de unidade, por exemplo de C: para D:.'},
+{title:'Voltar uma pasta',category:'Arquivos',cmd:'cd ..',powershell:'Set-Location ..',why:'Sobe para a pasta que contém a pasta atual.',output:'Os dois pontos representam a pasta anterior na hierarquia.'},
+{title:'Criar uma pasta',category:'Arquivos',cmd:'mkdir treino',powershell:'New-Item -ItemType Directory -Path .\\treino',why:'Cria uma pasta chamada treino na pasta atual.',output:'Use dir ou Get-ChildItem para conferir. Se já existir, use a pasta existente.'},
+{title:'Ler um arquivo',category:'Arquivos',cmd:'type .\\exemplos\\acessos.log',powershell:'Get-Content .\\exemplos\\acessos.log',why:'Exibe o registro fictício que acompanha o projeto. Execute na pasta do CyberLab.',output:'Cada linha tem horário, IP, ação e resultado. O Z indica horário UTC.'},
+{title:'Copiar um arquivo',category:'Arquivos',cmd:'copy .\\nota.txt .\\copia.txt',powershell:'Copy-Item .\\nota.txt .\\copia.txt',why:'Use depois de criar nota.txt na prática 1. Gera uma cópia para o exercício.',output:'Se copia.txt já existir, o destino pode ser substituído; confira o nome antes.'},
+{title:'Renomear a cópia',category:'Arquivos',cmd:'ren .\\copia.txt copia-renomeada.txt',powershell:'Rename-Item .\\copia.txt copia-renomeada.txt',why:'Muda o nome de um arquivo de exercício.',output:'Renomear sem mudar o conteúdo mantém o hash do arquivo.'},
+{title:'Remover só um arquivo de treino',category:'Arquivos',cmd:'del .\\copia-renomeada.txt',powershell:'Remove-Item .\\copia-renomeada.txt -Confirm',why:'Apaga o arquivo indicado. Confira a pasta atual e use apenas a cópia descartável do treino.',output:'A exclusão pelo terminal normalmente não envia o arquivo para a Lixeira.'},
+{title:'Ver a configuração de rede',category:'Rede',cmd:'ipconfig',powershell:'Get-NetIPConfiguration',why:'Mostra IP local e gateway dos adaptadores. O gateway costuma ser o roteador.',output:'Adaptadores virtuais ou desconectados também podem aparecer; procure o que está em uso.'},
+{title:'Testar o próprio computador',category:'Rede',cmd:'ping -n 4 127.0.0.1',powershell:'ping.exe -n 4 127.0.0.1',why:'Envia quatro testes ICMP para este computador, sem depender da Internet.',output:'Respostas mostram que o loopback responde; não confirmam que a Internet ou o site funciona.'},
+{title:'Consultar um nome no DNS',category:'Rede',cmd:'nslookup example.com',powershell:'Resolve-DnsName example.com',why:'Consulta endereços associados a um nome. Precisa de acesso ao DNS.',output:'Receber um endereço indica resolução de nome, sem garantir que o site está disponível.'},
+{title:'Observar a porta local 8000',category:'Rede',cmd:'netstat -ano | findstr ":8000"',powershell:'Get-NetTCPConnection -LocalPort 8000 -State Listen',why:'Inicie o servidor primeiro. Observe se algum processo escuta na porta do laboratório.',output:'No CMD procure 127.0.0.1:8000 e LISTENING. O filtro também pode mostrar outras conexões ou portas que contenham 8000.'},
+{title:'Conferir a resposta do laboratório',category:'Rede',cmd:'curl.exe -i http://127.0.0.1:8000/artifacts/access.log',powershell:'Test-NetConnection 127.0.0.1 -Port 8000',why:'No CMD consulte uma resposta HTTP com curl.exe; no PowerShell teste a conexão TCP. Inicie o servidor antes.',output:'No CMD, HTTP/1.0 200 OK indica que essa rota respondeu. No PowerShell, TcpTestSucceeded: True indica conexão TCP, sem validar o conteúdo HTTP.'},
+{title:'Ver a conta atual',category:'Sistema',cmd:'whoami',powershell:'whoami.exe',why:'Mostra a conta usada nesta sessão.',output:'O formato pode ser computador\\usuario. Isso não revela senha nem confirma acesso a todos os arquivos.'},
+{title:'Listar programas em execução',category:'Sistema',cmd:'tasklist',powershell:'Get-Process',why:'Exibe processos e seus identificadores, os PIDs.',output:'O PID ajuda a relacionar um programa com a coluna PID do netstat. Um nome desconhecido, sozinho, não prova um problema.'},
+{title:'Filtrar texto em um log',category:'Segurança',cmd:'findstr /n /c:"status=401" .\\exemplos\\acessos.log',powershell:'Select-String -Path .\\exemplos\\acessos.log -Pattern "status=401" -SimpleMatch',why:'Na pasta do projeto, localiza tentativas recusadas no registro fictício.',output:'Devem aparecer três linhas. O número da linha ajuda a achar o evento original.'},
+{title:'Calcular o hash de um arquivo',category:'Segurança',cmd:'certutil -hashfile .\\nota.txt SHA256',powershell:'Get-FileHash .\\nota.txt -Algorithm SHA256',why:'Na pasta da prática 1, calcula um resumo do conteúdo para comparar alterações.',output:'SHA256 é o algoritmo. Compare o valor do hash, sem confundir com o nome do arquivo. Hash não é criptografia.'},
+{title:'Consultar permissões de um arquivo',category:'Segurança',cmd:'icacls .\\nota.txt',powershell:'Get-Acl .\\nota.txt | Format-List',why:'Na pasta da prática 1, mostra regras de acesso sem alterá-las.',output:'Leia as contas e permissões. Uma leitura completa também considera grupos e regras herdadas.'},
+{title:'Limpar a tela do terminal',category:'Sistema',cmd:'cls',powershell:'Clear-Host',why:'Organiza a visualização durante o estudo.',output:'Limpa a tela visível, sem apagar seus arquivos ou garantir remoção de histórico.'},
+{title:'Consultar ajuda',category:'Sistema',cmd:'dir /?',powershell:'Get-Help Get-ChildItem -Examples',why:'Aprenda as opções de um comando. No PowerShell, a ajuda local pode estar resumida.',output:'No CMD muitos comandos aceitam /?. No PowerShell use Get-Help e o nome completo do comando.'}
+];
+let shell = 'cmd';
+const practices = {
+cmd:{files:'cd /d "%TEMP%"\nmkdir CyberLab-Treino\ncd CyberLab-Treino\necho Meu primeiro teste> nota.txt\ntype nota.txt\ncopy nota.txt copia.txt\ndir',hash:'certutil -hashfile nota.txt SHA256\necho Segunda linha>> nota.txt\ncertutil -hashfile nota.txt SHA256\ncertutil -hashfile copia.txt SHA256',logs:'type .\\exemplos\\acessos.log\nfindstr /n /c:"status=401" .\\exemplos\\acessos.log'},
+powershell:{files:'Set-Location $env:TEMP\nNew-Item -ItemType Directory -Path .\\CyberLab-Treino -Force\nSet-Location .\\CyberLab-Treino\nSet-Content .\\nota.txt "Meu primeiro teste" -Encoding UTF8\nGet-Content .\\nota.txt\nCopy-Item .\\nota.txt .\\copia.txt\nGet-ChildItem',hash:'Get-FileHash .\\nota.txt -Algorithm SHA256\nAdd-Content .\\nota.txt "Segunda linha" -Encoding UTF8\nGet-FileHash .\\nota.txt -Algorithm SHA256\nGet-FileHash .\\copia.txt -Algorithm SHA256',logs:'Get-Content .\\exemplos\\acessos.log\nSelect-String -Path .\\exemplos\\acessos.log -Pattern "status=401" -SimpleMatch'}
+};
+function render(){
+ const search = document.querySelector('#search').value.toLocaleLowerCase('pt-BR').trim();
+ const category = document.querySelector('#category').value;
+ const filtered = commands.filter(item => (category === 'Todos' || item.category === category) && [item.title,item.why,item.output,item[shell]].join(' ').toLocaleLowerCase('pt-BR').includes(search));
+ const cards = document.querySelector('#cards'); cards.replaceChildren();
+ filtered.forEach(item=>{
+  const article=document.createElement('article');
+  const label=document.createElement('p');label.className='category';label.textContent=item.category;
+  const title=document.createElement('h3');title.textContent=item.title;
+  const why=document.createElement('p');why.textContent=item.why;
+  const pre=document.createElement('pre');const code=document.createElement('code');code.textContent=item[shell];pre.append(code);
+  const output=document.createElement('p');output.className='output';output.textContent=item.output;
+  const copy=document.createElement('button');copy.type='button';copy.className='copy';copy.textContent='Copiar comando';copy.setAttribute('aria-label','Copiar: '+item.title);
+  copy.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(item[shell]);document.querySelector('#copy-status').textContent='Comando copiado. Confira a pasta antes de executar.';}catch{document.querySelector('#copy-status').textContent='A cópia automática não está disponível. Selecione o comando e use Ctrl+C.';}});
+  article.append(label,title,why,pre,output,copy);cards.append(article);
+ });
+ document.querySelector('#count').textContent=filtered.length+' de '+commands.length+' comandos · '+(shell==='cmd'?'CMD':'PowerShell');
+ document.querySelector('#empty').hidden=filtered.length>0;
+ document.querySelector('#shell-note').textContent=shell==='cmd'?'CMD usa comandos como dir, type e findstr. Variáveis de ambiente aparecem como %TEMP%.':'PowerShell usa comandos como Get-ChildItem e Get-Content. Variáveis de ambiente aparecem como $env:TEMP. Comandos com Get- retornam objetos que podem ser filtrados.';
+ for(const name of ['cmd','powershell'])document.getElementById(name).setAttribute('aria-pressed',String(shell===name));
+ for(const [id,key] of [['files-practice','files'],['hash-practice','hash'],['logs-practice','logs']])document.getElementById(id).textContent=practices[shell][key];
+ document.querySelector('#copy-status').textContent='';
+}
+document.getElementById('cmd').addEventListener('click',()=>{shell='cmd';render();});
+document.getElementById('powershell').addEventListener('click',()=>{shell='powershell';render();});
+document.querySelector('#search').addEventListener('input',render);
+document.querySelector('#category').addEventListener('change',render);
+render();
+</script>
+</body>
+</html>
